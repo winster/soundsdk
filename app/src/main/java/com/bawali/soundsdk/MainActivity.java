@@ -1,11 +1,16 @@
 package com.bawali.soundsdk;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -82,6 +87,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         doBindService();
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    101);
+
+        }
+
         refreshTimer = new Timer();
 
         refreshTimer.schedule(new TimerTask() {
@@ -95,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             }
         }, 5000, 2000);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
